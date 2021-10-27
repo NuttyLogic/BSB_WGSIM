@@ -477,7 +477,7 @@ void wgsim_core(const char *fn, int is_hap, uint64_t N, int dist, int std_dev, i
 static int simu_usage()
 {
 	fprintf(stderr, "\n");
-	fprintf(stderr, "Forked wgsim (Heng Li) (short read simulator) for simulation of bisuflite treated reads\n");
+	fprintf(stderr, "Forked wgsim (Heng Li) (short read simulator) for simulation of bisulfite treated reads\n");
 	fprintf(stderr, "Version: %s\n", PACKAGE_VERSION);
 	fprintf(stderr, "Contact: Colin Farrell <colinpfarrell@gmail.com>\n\n");
 	fprintf(stderr, "Usage:   wgsim [options] <in.ref.fa> \n\n");
@@ -492,7 +492,7 @@ static int simu_usage()
 	fprintf(stderr, "         -X FLOAT      probability an indel is extended [%.2f]\n", INDEL_EXTEND);
 	fprintf(stderr, "         -S INT        seed for random generator [-1]\n");
 	fprintf(stderr, "         -A FLOAT      disgard if the fraction of ambiguous bases higher than FLOAT [%.2f]\n", MAX_N_RATIO);
-	fprintf(stderr, "         -h            haplotype mode\n");
+	fprintf(stderr, "         -h INT        haplotype mode\n");
 	fprintf(stderr, "\n");
 	return 1;
 }
@@ -507,7 +507,7 @@ int main(int argc, char *argv[])
 	N = 1000000; dist = 500; std_dev = 50;
 	mean_insert = (dist - size_l * 2) / 2; 
 	size_l = size_r = 70;
-	while ((c = getopt(argc, argv, "e:d:s:N:1:2:r:R:hX:S:A:I:")) >= 0) {
+	while ((c = getopt(argc, argv, "e:d:s:N:1:2:r:R:h:X:S:A:I:")) >= 0) {
 		switch (c) {
 		case 'd': dist = atoi(optarg); break;
 		case 's': std_dev = atoi(optarg); break;
@@ -520,7 +520,7 @@ int main(int argc, char *argv[])
 		case 'X': INDEL_EXTEND = atof(optarg); break;
 		case 'A': MAX_N_RATIO = atof(optarg); break;
 		case 'S': seed = atoi(optarg); break;
-		case 'h': is_hap = 1; break;
+		case 'h': is_hap = atoi(optarg); break;
 		case 'I': mean_insert = atoi(optarg); break;
 		}
 	}
@@ -534,6 +534,7 @@ int main(int argc, char *argv[])
 	if (seed <= 0) seed = time(0)&0x7fffffff;
 	fprintf(stderr, "[wgsim] seed = %d\n", seed);
 	srand48(seed);
+	printf("is_hap %d\t\n\n", is_hap);
 	wgsim_core(argv[optind], is_hap, N, dist, std_dev, size_l, size_r, mean_insert);
 
 	//fclose(fpout1); fclose(fpout2);
